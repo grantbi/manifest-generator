@@ -7,7 +7,7 @@
     "start": "node index.js"
   },
   "bin": {
-    "manifest-generator": "node ./index.js"
+    "manifest-generator": "index.js"
   },
   "engines": {
     "node": ">=8.5.0"
