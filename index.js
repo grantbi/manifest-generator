@@ -11,7 +11,7 @@ var argv = require('yargs')
     .usage('Usage: $0 <command> [options]')
     .command({
         aliases:['dl'],
-        command:"download [manifest] [folder-path]",
+        command:"download <manifest> <folder-path>",
         desc:"Download the manifest from a given url.",
         builder:(yargs) => {
             yargs.positional('manifest', { describe:'The manifest.xml url to download.', type:'string' })
@@ -53,7 +53,7 @@ var argv = require('yargs')
     .example('$0 generate coh.my-server.com v2i1 v2i1 cityofhero.es/OuroDev brute.coh.network/OuroDev', 'Generates an example manifest with additional mirrors from v2i1 folder.')
     .argv;
 
-// console.log('argv', argv)
+console.log('argv', argv)
 if (argv._[0] == 'dl' || argv._[0] == "download") {
     console.log(`Downloading manifest from ${argv.manifest} to ${argv.folderPath}`)
     try {fs.mkdirSync(`./${argv.folderPath}`, { recursive: true });} catch(e) {}
@@ -75,18 +75,19 @@ if (argv._[0] == 'dl' || argv._[0] == "download") {
         // console.log('manifest:', manifest)
         for (let i = 0; i < manifest.filelist.file.length; i++) {
             let file = manifest.filelist.file[i]
+            // console.log('file:', file)
             // console.log(file['@_name'], file['@_size'], file['@_md5'], file['url'])
             let pathNew = `./${argv.folderPath}/${file['@_name']}`
             let p = path.parse(pathNew)
             let downloadFile = true
             if (fs.existsSync(pathNew)) {
-                downloadFile = !(await checkMd5(pathNew, file['@_md5'], () => {}))
+                downloadFile = !(await checkMd5(pathNew, file['@_md5'].toLowerCase(), () => {}))
             }
             try {fs.mkdirSync(p.dir, { recursive: true });} catch(e) {}
             if (downloadFile) {
                 console.log(`Downloading file[${i}/${manifest.filelist.file.length}]: ${pathNew} ${(file['@_size']/1000000).toFixed(2)}MB`)
-                await download(file['url'], pathNew)
-                await checkMd5(pathNew, file['@_md5'])
+                await download(file['url'].length && file['url'][0] || file['url'], pathNew)
+                await checkMd5(pathNew, file['@_md5'].toLowerCase())
             } else {
                 console.log(`File already exists file[${i}/${manifest.filelist.file.length}]: ${pathNew} ${(file['@_size']/1000000).toFixed(2)}MB`)
             }
