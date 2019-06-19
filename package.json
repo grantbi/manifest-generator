@@ -1,6 +1,6 @@
 {
   "name": "manifest-generator",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Generates a manifest for City of Heroes clients.",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "dependencies": {
     "fast-xml-parser": "^3.12.16",
     "request": "^2.88.0",
+    "xml-formatter": "^1.1.0",
     "yargs": "^13.2.4"
   }
 }

@@ -3,7 +3,8 @@
 var fs = require('fs'),
     parser = require('fast-xml-parser'),
     path = require('path'),
-    crypto = require("crypto");
+    format = require('xml-formatter'),
+    crypto = require("crypto"),
     request = require('request');
 
 // var exec = require("child_process").exec;
@@ -96,12 +97,7 @@ if (argv._[0] == 'gen' || argv._[0] == "generate") {
                     return {
                         '@_name':p,
                         '@_size':fs.statSync(f).size,
-                        url:[
-                            {'#text':`https://${domain}/${versionLabel}/${p}`},
-                            ...mirrors.map(d => ({
-                                '#text': `https://${d}/${versionLabel}/${p}`
-                            }))
-                        ],
+                        url:[...mirrors.map(d => ({'#text': `https://${d}/${versionLabel}/${p}`})),{'#text':`https://${domain}/${versionLabel}/${p}`}],
                         '@_md5': await checkMd5(f, undefined, () => {})
                     }
                 }
@@ -162,9 +158,12 @@ if (argv._[0] == 'gen' || argv._[0] == "generate") {
                     }
                 }
             }
-            let toXML = new parser.j2xParser({parseAttributeValue:true, ignoreAttributes:false});
+            let toXML = new parser.j2xParser({
+                parseAttributeValue:true, 
+                ignoreAttributes:false,
+            });
             let data = toXML.parse(m)
-            fs.writeFileSync('manifest.xml', data, 'utf8')
+            fs.writeFileSync('manifest.xml', format(data, {collapseContent:true}), 'utf8')
         } catch(e) {console.log(e)}
     })()
 }
