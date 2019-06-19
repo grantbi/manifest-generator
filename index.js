@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 var fs = require('fs'),
     parser = require('fast-xml-parser'),
     path = require('path'),
