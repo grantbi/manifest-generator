@@ -35,16 +35,7 @@ var argv = require('yargs')
             alias: 'r',
             describe: 'run your program',
             demandOption: true
-        },
-        'path': {
-            alias: 'p',
-            describe: 'provide a path to file',
-            demandOption: true
-        },
-        'spec': {
-            alias: 's',
-            describe: 'program specifications'
-        } */
+        },*/
     })
     .demandCommand(2, "You need to specify at least two commands.")
     .help()
@@ -53,7 +44,7 @@ var argv = require('yargs')
     .example('$0 generate coh.my-server.com v2i1 v2i1 cityofhero.es/OuroDev brute.coh.network/OuroDev', 'Generates an example manifest with additional mirrors from v2i1 folder.')
     .argv;
 
-console.log('argv', argv)
+// console.log('argv', argv)
 if (argv._[0] == 'dl' || argv._[0] == "download") {
     console.log(`Downloading manifest from ${argv.manifest} to ${argv.folderPath}`)
     try {fs.mkdirSync(`./${argv.folderPath}`, { recursive: true });} catch(e) {}
@@ -72,11 +63,8 @@ if (argv._[0] == 'dl' || argv._[0] == "download") {
         let manifestFile = await download(argv.manifest, `./${argv.folderPath}/manifest.xml`)
         let xml = fs.readFileSync(`./${argv.folderPath}/manifest.xml`, 'utf8')
         let {manifest} = parser.parse(xml, {parseAttributeValue:true, ignoreAttributes:false})
-        // console.log('manifest:', manifest)
         for (let i = 0; i < manifest.filelist.file.length; i++) {
             let file = manifest.filelist.file[i]
-            // console.log('file:', file)
-            // console.log(file['@_name'], file['@_size'], file['@_md5'], file['url'])
             let pathNew = `./${argv.folderPath}/${file['@_name']}`
             let p = path.parse(pathNew)
             let downloadFile = true
@@ -85,6 +73,7 @@ if (argv._[0] == 'dl' || argv._[0] == "download") {
             }
             try {fs.mkdirSync(p.dir, { recursive: true });} catch(e) {}
             if (downloadFile) {
+                // Add some logic here to retry with mirrors if the file doesn't exist.
                 console.log(`Downloading file[${i}/${manifest.filelist.file.length}]: ${pathNew} ${(file['@_size']/1000000).toFixed(2)}MB`)
                 await download(file['url'].length && file['url'][0] || file['url'], pathNew)
                 await checkMd5(pathNew, file['@_md5'].toLowerCase())
@@ -96,18 +85,13 @@ if (argv._[0] == 'dl' || argv._[0] == "download") {
 }
 if (argv._[0] == 'gen' || argv._[0] == "generate") {
     console.log("Generating manifest.")
-    // const stats = fs.statSync("myfile.txt");
-    // const fileSizeInBytes = stats.size;
-
     const { domain, fromFolder, versionLabel, mirrors } = argv;
     
     (async () => {  
         try {  
             let files = await getFiles(fromFolder)
-            // console.log(files)
             let fileList = await Promise.all(files.map(async f => {
                 let p = path.relative(`${process.cwd()}/${fromFolder}`, f);
-                // console.log(p);
                 if (p != '.DS_Store' && p != 'manifest.xml') {
                     return {
                         '@_name':p,
