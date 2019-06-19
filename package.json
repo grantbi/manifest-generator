@@ -1,0 +1,19 @@
+{
+  "name": "manifest-generator",
+  "version": "0.5.0",
+  "description": "Generates a manifest for City of Heroes clients.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "bin": {
+    "manifest-generator": "./index.js"
+  },
+  "author": "grantbi",
+  "license": "ISC",
+  "dependencies": {
+    "fast-xml-parser": "^3.12.16",
+    "request": "^2.88.0",
+    "yargs": "^13.2.4"
+  }
+}
