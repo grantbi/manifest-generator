@@ -40,8 +40,8 @@ var argv = require('yargs')
     .demandCommand(2, "You need to specify at least two commands.")
     .help()
     .wrap(null)
-    .example('$0 download https://join.cityofheroesrebirth.com/Manifests/Rebirth.xml v2i1', 'Downloads the files from the manifest url and puts them into v2i1 folder.')
-    .example('$0 generate coh.my-server.com v2i1 v2i1 cityofhero.es/OuroDev brute.coh.network/OuroDev', 'Generates an example manifest with additional mirrors from v2i1 folder.')
+    .example('$0 download https://a.coh.server.com/manifest.xml myFiles', 'Downloads the files from the manifest url and puts them into myFiles folder.')
+    .example('$0 generate coh.my-server.com myFiles patchDir mirror1.com', 'Generates an example manifest with additional mirrors from myFiles folder.')
     .argv;
 
 // console.log('argv', argv)
